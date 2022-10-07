@@ -14,17 +14,17 @@ import DeleteConfirmPopup from "./DeleteConfirmPopup";
 import EditProfilePopup from "./EditProfilePopup";
 import RenewAvatarPopup from "./RenewAvatarPopup";
 import AddCardPopup from "./AddCardPopup";
-import PopupWithBurger from "./PopupWithBurger";
+import MenuWithBurger from "./MenuWithBurger";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Switch, Route, useHistory } from "react-router-dom";
+import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import * as auth from "../utils/auth";
 
 function App() {
-  const [renewAvatarPopup, renewAvatarPopupOpen] = useState(false);
-  const [editProfilePopup, editProfilePopupOpen] = useState(false);
+  const [isAvatarPopup, setAvatarPopup] = useState(false);
+  const [isProfileEditPopup, setProfileEditPopup] = useState(false);
   const [isConfirmPopupOpen, setConfirmPopupOpen] = useState(false);
-  const [addCardPopup, addCardPopupOpen] = useState(false);
+  const [isAddCardPopup, setAddCardPopup] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
@@ -65,15 +65,15 @@ function App() {
   }, [history]);
 
   function handleEditAvatarClick() {
-    renewAvatarPopupOpen(true);
+    setAvatarPopup(true);
   }
 
   function handleEditProfileClick() {
-    editProfilePopupOpen(true);
+    setProfileEditPopup(true);
   }
 
   function handleAddPlaceClick() {
-    addCardPopupOpen(true);
+    setAddCardPopup(true);
   }
 
   function handleCardClick(card) {
@@ -85,23 +85,12 @@ function App() {
   }
 
   function closeAllPopups() {
-    renewAvatarPopupOpen(false);
-    editProfilePopupOpen(false);
-    addCardPopupOpen(false);
+    setAvatarPopup(false);
+    setProfileEditPopup(false);
+    setAddCardPopup(false);
     setSelectedCard({});
     setInfoTooltipOpen(false);
   }
-
-  useEffect(() => {
-    const closeByEscape = (evt) => {
-      if (evt.key === "Escape") {
-        closeAllPopups();
-      }
-    };
-    document.addEventListener("keydown", closeByEscape);
-
-    return () => document.removeEventListener("keydown", closeByEscape);
-  }, []);
 
   useEffect(() => {
     const closeOverlay = (evt) => {
@@ -136,9 +125,9 @@ function App() {
   }
 
   const isOpen =
-    renewAvatarPopupOpen ||
-    editProfilePopupOpen ||
-    addCardPopupOpen ||
+    setAvatarPopup ||
+    setProfileEditPopup ||
+    setAddCardPopup ||
     selectedCard.link;
 
   useEffect(() => {
@@ -256,7 +245,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App">
-        <PopupWithBurger
+        <MenuWithBurger
           isOpen={isMenuOpen}
           onClose={closeAllPopups}
           onLogOut={handleLogOut}
@@ -294,6 +283,10 @@ function App() {
             <Route path="/sign-up">
               <Register handleRegistration={handleRegistration} />
             </Route>
+
+            <Route path='*'>
+              {loggedIn ? <Redirect to='/' /> : <Redirect to ='/sign-in' />}
+            </Route>
           </Switch>
 
           {loggedIn && <Footer />}
@@ -301,19 +294,19 @@ function App() {
           <Footer />
 
           <EditProfilePopup
-            isOpen={editProfilePopup}
+            isOpen={isProfileEditPopup}
             onClose={closeAllPopups}
             onUpdateUser={handleUpdateUser}
           />
 
           <AddCardPopup
-            isOpen={addCardPopup}
+            isOpen={isAddCardPopup}
             onClose={closeAllPopups}
             onAddCard={handleUpdateCard}
           />
 
           <RenewAvatarPopup
-            isOpen={renewAvatarPopup}
+            isOpen={isAvatarPopup}
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
           />

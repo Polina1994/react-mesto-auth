@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function PopupWithBurger(props) {
+function MenuWithBurger(props) {
   return (
     <section
       className={`header__burg-menu_popup ${
@@ -15,4 +15,4 @@ function PopupWithBurger(props) {
   );
 }
 
-export default PopupWithBurger;
+export default MenuWithBurger;

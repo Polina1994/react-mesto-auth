@@ -21,10 +21,9 @@ function PopupWithForm({
         <h3 className="popup__title">{title}</h3>
         <form
           name={name}
-          id="profileForm"
+          id={`${name}`}
           action="#"
           className="popup__form popup__form_place_edit"
-          noValidate
           onSubmit={onSubmit}
         >
           {children}
